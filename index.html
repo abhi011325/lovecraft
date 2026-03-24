@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#080406">
+<title>Lovecraft ♥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080406;--sur:#130a10;--cb:#1a0d14;--bd:#2d1626;--bdl:#3d2035;--rose:#c4365a;--rosed:#8b1a3a;--gold:#c9a84c;--cream:#f0e6d3;--mut:#7a5f6e;--man:#5b8fd4;--woman:#d4658a;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{min-height:100dvh;background:var(--bg);color:var(--cream);font-family:'Jost',sans-serif;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 50% at 15% 5%,rgba(139,26,58,.22) 0%,transparent 65%),radial-gradient(ellipse 60% 40% at 85% 95%,rgba(196,54,90,.12) 0%,transparent 65%);}
+.screen{display:none;position:relative;z-index:1;min-height:100dvh;width:100%;max-width:480px;margin:0 auto;padding:24px 20px 36px;}
+.screen.active{display:flex;flex-direction:column;}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:48px;letter-spacing:.05em;line-height:1;}
+h1 em{color:var(--rose);font-style:italic;}
+h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:26px;}
+.tagline{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut);margin-top:6px;}
+.lbl{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut);font-weight:500;}
+.divider{width:100px;height:1px;background:linear-gradient(90deg,transparent,var(--rose),transparent);margin:0 auto;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:10px;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;transition:all .18s;min-height:50px;}
+.btn:active{transform:scale(.97);}
+.bp{background:linear-gradient(135deg,var(--rosed),var(--rose));color:#fff;box-shadow:0 4px 20px rgba(196,54,90,.3);}
+.bgold{background:linear-gradient(135deg,#a8842a,var(--gold));color:#0a0608;box-shadow:0 4px 20px rgba(201,168,76,.25);}
+.bgh{background:transparent;border:1px solid var(--bdl);color:var(--mut);}
+.bda{background:rgba(196,54,90,.1);border:1px solid rgba(196,54,90,.3);color:var(--rose);}
+.bfu{width:100%;}
+.blg{padding:18px 32px;font-size:14px;min-height:58px;}
+.bsm{padding:8px 14px;font-size:11px;min-height:36px;letter-spacing:.1em;}
+input[type=text],textarea{background:var(--sur);border:1px solid var(--bd);border-radius:10px;color:var(--cream);font-family:'Jost',sans-serif;font-size:16px;padding:14px 16px;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+input:focus,textarea:focus{border-color:var(--rose);}
+input::placeholder,textarea::placeholder{color:var(--mut);}
+textarea{resize:none;line-height:1.5;}
+
+/* ── PIN ── */
+#screen-pin{align-items:center;justify-content:center;gap:40px;text-align:center;}
+.ph{font-size:52px;animation:hb 2.2s ease-in-out infinite;}
+@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.06)}70%{transform:scale(1)}}
+.pdots{display:flex;gap:18px;justify-content:center;margin:8px 0;}
+.pdot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--bdl);background:transparent;transition:all .15s;}
+.pdot.on{background:var(--rose);border-color:var(--rose);box-shadow:0 0 10px rgba(196,54,90,.5);}
+.perr{color:var(--rose);font-size:12px;opacity:0;transition:opacity .2s;min-height:18px;margin-top:4px;}
+.perr.show{opacity:1;}
+.ppad{display:grid;grid-template-columns:repeat(3,72px);gap:12px;}
+.pkey{width:72px;height:72px;border-radius:50%;background:var(--sur);border:1px solid var(--bd);color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.pkey:active{background:var(--cb);border-color:var(--rose);transform:scale(.94);}
+.pkey.wide{background:transparent;border:none;color:var(--mut);font-size:18px;font-family:'Jost',sans-serif;border-radius:36px;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(8,4,6,.93);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.mbox{background:var(--sur);border:1px solid var(--bdl);border-radius:20px;padding:28px 24px;width:min(380px,92vw);display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;position:relative;max-height:88vh;overflow-y:auto;}
+.mcl{position:sticky;top:0;right:0;float:right;background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;padding:0 4px;margin:-4px -4px 0 0;}
+
+/* ── SETUP ── */
+#screen-setup{align-items:center;gap:20px;}
+.pcard{background:var(--sur);border:1px solid var(--bd);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:11px;width:100%;}
+.pcard.mc{border-color:rgba(91,143,212,.25);}
+.pcard.fc{border-color:rgba(212,101,138,.25);}
+.prole{font-family:'Cormorant Garamond',serif;font-size:18px;}
+.prole.man{color:var(--man);}
+.prole.woman{color:var(--woman);}
+.phrow{display:flex;align-items:center;gap:12px;}
+.pprev{width:52px;height:52px;border-radius:50%;background:var(--cb);border:1.5px solid var(--bdl);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;position:relative;}
+.pprev img{width:100%;height:100%;object-fit:cover;}
+.pov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:15px;opacity:0;transition:opacity .2s;}
+.pprev:active .pov{opacity:1;}
+.pbtn{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:6px 12px;border-radius:8px;background:var(--cb);border:1px solid var(--bd);color:var(--mut);font-size:12px;cursor:pointer;font-family:'Jost',sans-serif;}
+input[type=file]{display:none;}
+
+/* ── GAME ── */
+#screen-game{padding:0;gap:0;}
+.sb{display:flex;align-items:stretch;background:var(--sur);border-bottom:1px solid var(--bd);padding:8px 14px;position:sticky;top:0;z-index:10;}
+.sp{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px;border-radius:10px;transition:background .2s;}
+.sp.at{background:rgba(196,54,90,.1);}
+.sav{width:34px;height:34px;border-radius:50%;background:var(--cb);border:1.5px solid var(--bdl);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sav img{width:100%;height:100%;object-fit:cover;}
+.sname{font-size:14px;font-weight:500;color:#a08898;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp.at .sname{color:#f0e6d3;font-weight:600;}
+.snum{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;line-height:1;}
+.snum.pos{color:var(--gold);}
+.snum.neg{color:var(--rose);}
+.sdiv{display:flex;align-items:center;padding:0 8px;color:var(--bdl);font-family:'Cormorant Garamond',serif;font-size:22px;}
+
+/* Turn indicator */
+.ti{text-align:center;padding:16px 20px 0;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.tlbl{color:#9a7a8a;font-size:12px;letter-spacing:.28em;text-transform:uppercase;font-weight:500;}
+.tname{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;}
+.tname.man{color:var(--man);}
+.tname.woman{color:var(--woman);}
+.tsub{font-size:19px;color:#c8aab8;font-family:'Cormorant Garamond',serif;font-style:italic;margin-top:4px;}
+.skipn{margin-top:6px;padding:8px 14px;border-radius:10px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);font-size:12px;color:var(--gold);display:none;}
+.skipn.show{display:block;}
+.ga{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 20px 10px;gap:16px;}
+
+/* ── CARD ── */
+.cw{width:100%;max-width:340px;perspective:1000px;}
+.ac{width:100%;min-height:320px;border-radius:20px;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);}
+.ac.fl{transform:rotateY(180deg);}
+.cf{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 20px;gap:10px;overflow:hidden;}
+.cfront{background:linear-gradient(135deg,var(--cb),var(--sur));border:1px solid var(--bdl);}
+.cfi{font-size:52px;opacity:.5;animation:hb 2.2s ease-in-out infinite;}
+.cft{font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:#8a6878;text-align:center;}
+.cback{background:linear-gradient(135deg,#200a16,#1c0d16);border:1px solid var(--bdl);transform:rotateY(180deg);justify-content:center;padding:18px 20px;gap:12px;overflow:visible;position:relative;height:auto;min-height:320px;}
+.cback::before{content:'';position:absolute;inset:8px;border:1px solid rgba(196,54,90,.1);border-radius:13px;pointer-events:none;}
+
+/* Card photo — centered, prominent */
+.cphoto-wrap{width:96px;height:96px;border-radius:50%;background:var(--cb);border:2.5px solid rgba(196,54,90,.45);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:42px;flex-shrink:0;box-shadow:0 0 20px rgba(196,54,90,.2);}
+.cphoto-wrap img{width:100%;height:100%;object-fit:cover;}
+
+/* Card text — full width, player+partner embedded in text */
+.ctxt{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;line-height:1.55;color:#f5ddd0;text-align:center;width:100%;}
+.ctxt .pname{color:var(--rose);font-style:italic;}
+.corn{color:var(--rose);font-size:16px;opacity:.4;}
+
+/* URL button */
+.curl{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,var(--rosed),var(--rose));color:#fff;border-radius:12px;padding:14px 20px;text-decoration:none;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;width:100%;max-width:340px;box-shadow:0 4px 16px rgba(196,54,90,.3);}
+.curl:active{transform:scale(.97);opacity:.9;}
+
+/* Timer */
+.ctimer{display:flex;flex-direction:column;align-items:center;gap:10px;background:rgba(0,0,0,.3);border:1px solid rgba(196,54,90,.18);border-radius:14px;padding:14px 20px;width:100%;max-width:340px;}
+.tdis{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--cream);letter-spacing:.05em;line-height:1;transition:color .3s;}
+.tdis.run{color:var(--gold);}
+.tdis.done{color:#6aba90;}
+.tctrls{display:flex;gap:10px;}
+.tbtn{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;letter-spacing:.1em;transition:all .15s;}
+.tbtn:active{transform:scale(.96);}
+.tbtn.ts{background:linear-gradient(135deg,var(--rosed),var(--rose));color:#fff;}
+.tbtn.tr{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--mut);}
+.tdone-msg{font-size:13px;color:#6aba90;font-weight:500;}
+
+/* Draw / Outcome */
+.dsec{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%;max-width:340px;}
+.rbadge{font-size:13px;color:#9a7a8a;text-align:center;}
+.obs{display:flex;flex-direction:column;gap:9px;width:100%;max-width:340px;}
+.ob{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1px solid;cursor:pointer;transition:all .18s;background:none;}
+.ob:active{transform:scale(.98);}
+.ob.done{background:rgba(74,140,106,.08);border-color:rgba(74,140,106,.3);}
+.ob.ref{background:rgba(196,54,90,.08);border-color:rgba(196,54,90,.3);}
+.ob.thy{background:rgba(106,85,96,.08);border-color:rgba(106,85,96,.3);}
+.oico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;font-weight:600;}
+.done .oico{background:rgba(74,140,106,.2);color:#6aba90;}
+.ref .oico{background:rgba(196,54,90,.2);color:var(--rose);}
+.thy .oico{background:rgba(106,85,96,.2);color:var(--mut);}
+.oinf{flex:1;}
+.otit{font-size:15px;font-weight:500;color:var(--cream);}
+.osub{font-size:13px;color:#9a7a8a;margin-top:2px;}
+.opts{font-family:'Cormorant Garamond',serif;font-size:28px;flex-shrink:0;font-weight:400;}
+.done .opts{color:#6aba90;}
+.ref .opts{color:var(--rose);}
+.thy .opts{color:var(--mut);}
+.gfooter{padding:10px 20px 26px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+/* Manage */
+#screen-manage{gap:18px;}
+.mhdr{display:flex;align-items:center;gap:12px;padding-top:4px;}
+.bbk{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--sur);border:1px solid var(--bd);border-radius:10px;cursor:pointer;color:var(--mut);font-size:20px;flex-shrink:0;}
+.bbar{background:var(--sur);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;display:flex;justify-content:space-around;}
+.bst{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bnum{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;}
+.bnum.man{color:var(--man);}
+.bnum.woman{color:var(--woman);}
+.bwarn{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--gold);display:none;}
+.bwarn.show{display:block;}
+.aform{background:var(--sur);border:1px solid var(--bd);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:11px;}
+.gtog{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--bd);}
+.gopt{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--mut);background:transparent;transition:all .2s;user-select:none;}
+.gopt.sm{background:rgba(91,143,212,.15);color:var(--man);}
+.gopt.sf{background:rgba(212,101,138,.15);color:var(--woman);}
+.asec{display:flex;flex-direction:column;gap:7px;}
+.albl{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut);}
+.ait{background:var(--sur);border:1px solid var(--bd);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px;}
+.ait.cust{border-color:rgba(201,168,76,.18);}
+.gbdg{font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border-radius:4px;flex-shrink:0;margin-top:2px;}
+.gbdg.m{background:rgba(91,143,212,.15);color:var(--man);}
+.gbdg.f{background:rgba(212,101,138,.15);color:var(--woman);}
+.atxt{flex:1;font-size:12px;color:var(--cream);line-height:1.5;}
+.adel{color:var(--mut);font-size:15px;cursor:pointer;padding:2px 4px;flex-shrink:0;}
+.adel:active{color:var(--rose);}
+.scr{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.es{text-align:center;padding:20px;color:var(--mut);font-size:14px;font-style:italic;font-family:'Cormorant Garamond',serif;}
+
+/* Winner */
+#screen-winner{align-items:center;justify-content:center;gap:24px;text-align:center;}
+.wtro{font-size:64px;animation:bnc 1.2s ease-in-out infinite;}
+@keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.wlbl{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut);}
+.wname{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;color:var(--gold);}
+.wsub{color:var(--mut);font-size:14px;margin-top:2px;}
+.wcouple{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--rose);margin-top:4px;}
+.fsc{display:flex;gap:20px;background:var(--sur);border:1px solid var(--bd);border-radius:16px;padding:18px 32px;}
+.fsi{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.fsn{font-size:12px;color:var(--mut);}
+.fsv{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--cream);}
+.fss{display:flex;align-items:center;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--bdl);}
+
+/* History modal */
+.hitem{background:var(--cb);border:1px solid var(--bd);border-radius:10px;padding:11px 14px;text-align:left;display:flex;gap:10px;align-items:flex-start;width:100%;}
+.hico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px;}
+.hico.done{background:rgba(74,140,106,.2);color:#6aba90;}
+.hico.ref{background:rgba(196,54,90,.2);color:var(--rose);}
+.hico.thy{background:rgba(106,85,96,.2);color:var(--mut);}
+.hinf{flex:1;}
+.hpl{font-size:11px;color:var(--mut);margin-bottom:3px;}
+.htxt{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--cream);line-height:1.4;}
+.hpts{font-family:'Cormorant Garamond',serif;font-size:22px;flex-shrink:0;}
+
+/* Toast & flash */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--sur);border:1px solid var(--bdl);border-radius:30px;padding:9px 20px;font-size:13px;color:var(--cream);white-space:nowrap;opacity:0;transition:all .25s;z-index:300;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sfl{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);font-family:'Cormorant Garamond',serif;font-size:90px;font-weight:300;opacity:0;pointer-events:none;z-index:150;}
+.sfl.go{animation:sfa .75s ease-out forwards;}
+@keyframes sfa{0%{opacity:1;transform:translate(-50%,-50%) scale(.5)}40%{opacity:1;transform:translate(-50%,-62%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="sfl" id="sf"></div>
+
+<!-- HISTORY MODAL -->
+<div class="overlay" id="histModal">
+  <div class="mbox" style="gap:14px;">
+    <button class="mcl" onclick="closeHist()">✕</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;">Session History</div>
+    <div style="font-size:12px;color:var(--mut);">Is session mein kya kya hua</div>
+    <div id="histList" style="width:100%;display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<!-- ADMIN PIN MODAL -->
+<div class="overlay" id="adminModal">
+  <div class="mbox">
+    <button class="mcl" onclick="closeAdmin()">✕</button>
+    <div><div style="font-size:28px;">⚙</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;margin-top:6px;">Admin Access</div>
+    <div style="font-size:12px;color:var(--mut);margin-top:4px;">Admin PIN daalo</div></div>
+    <div>
+      <div class="pdots" id="apd">
+        <div class="pdot" id="a0"></div><div class="pdot" id="a1"></div>
+        <div class="pdot" id="a2"></div><div class="pdot" id="a3"></div>
+      </div>
+      <p class="perr" id="aperr">Galat PIN — dobara try karo</p>
+    </div>
+    <div class="ppad">
+      <button class="pkey" onclick="ap('1')">1</button><button class="pkey" onclick="ap('2')">2</button><button class="pkey" onclick="ap('3')">3</button>
+      <button class="pkey" onclick="ap('4')">4</button><button class="pkey" onclick="ap('5')">5</button><button class="pkey" onclick="ap('6')">6</button>
+      <button class="pkey" onclick="ap('7')">7</button><button class="pkey" onclick="ap('8')">8</button><button class="pkey" onclick="ap('9')">9</button>
+      <button class="pkey wide" onclick="apc()">✕</button><button class="pkey" onclick="ap('0')">0</button><button class="pkey wide" onclick="apd2()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME PIN -->
+<div class="screen active" id="screen-pin">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:40px;margin:auto;text-align:center;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="ph">♥</div>
+      <h1>Love<em>craft</em></h1>
+      <p class="tagline">A game for two</p>
+    </div>
+    <div>
+      <div class="pdots" id="gpd">
+        <div class="pdot" id="g0"></div><div class="pdot" id="g1"></div>
+        <div class="pdot" id="g2"></div><div class="pdot" id="g3"></div>
+      </div>
+      <p class="perr" id="gperr">Galat PIN — dobara try karo</p>
+    </div>
+    <div class="ppad">
+      <button class="pkey" onclick="gp('1')">1</button><button class="pkey" onclick="gp('2')">2</button><button class="pkey" onclick="gp('3')">3</button>
+      <button class="pkey" onclick="gp('4')">4</button><button class="pkey" onclick="gp('5')">5</button><button class="pkey" onclick="gp('6')">6</button>
+      <button class="pkey" onclick="gp('7')">7</button><button class="pkey" onclick="gp('8')">8</button><button class="pkey" onclick="gp('9')">9</button>
+      <button class="pkey wide" onclick="gpc()">✕</button><button class="pkey" onclick="gp('0')">0</button><button class="pkey wide" onclick="gpd2()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="screen-setup">
+  <div style="text-align:center;margin-bottom:4px;"><h1>Love<em>craft</em></h1><p class="tagline">Kaun khel raha hai?</p><br><div class="divider"></div></div>
+  <div style="height:10px;"></div>
+  <div style="width:100%;margin-bottom:4px;">
+    <div class="lbl" style="margin-bottom:8px;">Couple ka naam</div>
+    <input type="text" id="coupleInp" placeholder="e.g. Team Romeo & Juliet ♥" maxlength="32" autocomplete="off" spellcheck="false">
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
+    <div class="pcard mc">
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:24px;">👨</span><div><div class="prole man">Him</div><div style="font-size:11px;color:var(--mut);">Uske liye tasks karega</div></div></div>
+      <input type="text" id="nameM" placeholder="Uska naam" maxlength="18" autocomplete="off" spellcheck="false">
+      <div class="phrow">
+        <div class="pprev" id="prevM" onclick="tCam('M')"><span>📷</span><div class="pov">📷</div></div>
+        <div><div style="font-size:11px;color:var(--mut);">Photo (optional)</div><button class="pbtn" onclick="tCam('M')">📷 Camera se lo</button></div>
+      </div>
+      <input type="file" id="camM" accept="image/*" capture="user" onchange="lPhoto(event,'M')">
+    </div>
+    <div class="pcard fc">
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:24px;">👩</span><div><div class="prole woman">Her</div><div style="font-size:11px;color:var(--mut);">Uske liye tasks karegi</div></div></div>
+      <input type="text" id="nameF" placeholder="Uska naam" maxlength="18" autocomplete="off" spellcheck="false">
+      <div class="phrow">
+        <div class="pprev" id="prevF" onclick="tCam('F')"><span>📷</span><div class="pov">📷</div></div>
+        <div><div style="font-size:11px;color:var(--mut);">Photo (optional)</div><button class="pbtn" onclick="tCam('F')">📷 Camera se lo</button></div>
+      </div>
+      <input type="file" id="camF" accept="image/*" capture="user" onchange="lPhoto(event,'F')">
+    </div>
+  </div>
+  <div style="height:8px;"></div>
+  <p style="font-size:12px;color:var(--mut);text-align:center;line-height:1.7;align-self:center;">Baari baari task draw karo apne <em style="color:var(--cream)">partner ke liye</em>.<br>Kar diya → +1 · Maine mana → −1 · Partner ne mana → 0</p>
+  <div style="height:8px;"></div>
+  <button class="btn bp bfu blg" onclick="startGame()">Shuru Karo ♥</button>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="sb">
+    <div class="sp" id="spM"><div class="sav" id="avM"><span>👨</span></div><div class="sname" id="snM">Him</div><div class="snum" id="svM">0</div></div>
+    <div class="sdiv">♥</div>
+    <div class="sp" id="spF"><div class="sav" id="avF"><span>👩</span></div><div class="sname" id="snF">Her</div><div class="snum" id="svF">0</div></div>
+  </div>
+  <div class="ti">
+    <div class="tlbl" id="tlbl">Abhi Ki Baari</div>
+    <div class="tname" id="tname">—</div>
+    <div class="tsub" id="tsub"></div>
+    <div class="skipn" id="skipn"></div>
+  </div>
+  <div class="ga">
+    <div class="cw">
+      <div class="ac" id="ac">
+        <div class="cf cfront">
+          <div class="cfi">♥</div>
+          <div class="cft">Card draw karo aur apna task dekho</div>
+        </div>
+        <div class="cf cback">
+          <div class="cphoto-wrap" id="cphoto" style="flex-shrink:0;"><span id="cphi" style="font-size:42px;">👤</span></div>
+          <div class="ctxt" id="ctxt">—</div>
+          <div class="corn">✦</div>
+        </div>
+      </div>
+    </div>
+    <a class="curl" id="curlBtn" href="#" target="_blank" rel="noopener" style="display:none;"><span id="curlLbl">🎲 Link Kholo</span><span style="font-size:18px;">→</span></a>
+    <div class="ctimer" id="ctimer" style="display:none;">
+      <div class="tdis" id="tdis">0:00</div>
+      <div class="tctrls">
+        <button class="tbtn ts" id="tsbtn" onclick="tStartPause()">▶ Start</button>
+        <button class="tbtn tr" onclick="tReset()">↺ Reset</button>
+      </div>
+      <div class="tdone-msg" id="tdonemsg" style="display:none;">⏱ Khatam! Bahut badhiya! ✓</div>
+    </div>
+    <div class="dsec" id="dsec">
+      <div class="rbadge" id="rbadge"></div>
+      <button class="btn bp bfu blg" onclick="drawCard()">Card Draw Karo ♥</button>
+    </div>
+    <div class="obs" id="obs" style="display:none;">
+      <button class="ob done" onclick="rec('done')"><div class="oico">✓</div><div class="oinf"><div class="otit">Kar diya! 🎉</div><div class="osub">Task complete</div></div><div class="opts">+1</div></button>
+      <button class="ob ref" onclick="rec('ref')"><div class="oico">✗</div><div class="oinf"><div class="otit">Maine mana kiya</div><div class="osub" id="irsub">—</div></div><div class="opts">−1</div></button>
+      <button class="ob thy" onclick="rec('thy')"><div class="oico">⊘</div><div class="oinf"><div class="otit">Partner ne mana kiya</div><div class="osub" id="thsub">—</div></div><div class="opts">0</div></button>
+    </div>
+  </div>
+  <div class="gfooter">
+    <button class="btn bgh bsm" onclick="changePlayers()">👤 Players</button>
+    <button class="btn bgh bsm" onclick="openAdmin()">⚙ Admin</button>
+    <button class="btn bda bsm" onclick="doReset()">↺ Reset</button>
+    <button class="btn bgh bsm" onclick="showHistory()">📋 History</button>
+  </div>
+</div>
+
+<!-- MANAGE -->
+<div class="screen" id="screen-manage">
+  <div class="mhdr"><div class="bbk" onclick="goGame()">←</div><h2>Activities</h2></div>
+  <div class="bbar">
+    <div class="bst"><div class="bnum man" id="cntM">0</div><div class="lbl">👨 Uske Tasks</div></div>
+    <div class="bst"><div class="bnum woman" id="cntF">0</div><div class="lbl">👩 Uske Tasks</div></div>
+  </div>
+  <div class="bwarn" id="bwarn">⚠ Tasks barabar nahi — balance karo.</div>
+  <div class="aform">
+    <div class="lbl">Naya Activity Add Karo</div>
+    <div class="gtog"><div class="gopt sm" id="goptM" onclick="selG('M')">👨 Woh karta hai</div><div class="gopt" id="goptF" onclick="selG('F')">👩 Woh karti hai</div></div>
+    <textarea id="newAct" placeholder="Activity likhо — {P} = player ka naam, {Q} = partner ka naam" rows="3" maxlength="300"></textarea>
+    <button class="btn bgold bfu" onclick="addAct()">Add Karo ✦</button>
+  </div>
+  <div class="aform">
+    <div class="lbl">🔐 PIN Change Karo</div>
+    <input type="text" id="ngp" placeholder="Naya Game PIN (4 digits)" maxlength="4" inputmode="numeric" pattern="\d*">
+    <input type="text" id="nap" placeholder="Naya Admin PIN (4 digits)" maxlength="4" inputmode="numeric" pattern="\d*">
+    <button class="btn bgold bfu" onclick="changePins()">PIN Update Karo 🔐</button>
+  </div>
+  <div class="scr" style="display:flex;flex-direction:column;gap:18px;padding-bottom:20px;margin-top:4px;">
+    <div class="asec"><div class="albl">Custom Activities</div><div id="custList"><div class="es">Koi custom activity nahi abhi</div></div></div>
+    <div class="asec"><div class="albl">Default Activities (62 total)</div><div id="defList"></div></div>
+  </div>
+</div>
+
+<!-- WINNER -->
+<div class="screen" id="screen-winner">
+  <div class="wtro" id="wtro">🏆</div>
+  <div>
+    <div class="wlbl">Winner</div>
+    <div class="wname" id="wname">—</div>
+    <div class="wsub">Bahut badhiya khela!</div>
+    <div class="wcouple" id="wcouple">♥</div>
+  </div>
+  <div class="fsc"><div class="fsi"><div class="fsn" id="fnM">Him</div><div class="fsv" id="fsM">0</div></div><div class="fss">♥</div><div class="fsi"><div class="fsn" id="fnF">Her</div><div class="fsv" id="fsF">0</div></div></div>
+  <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;">
+    <button class="btn bp bfu blg" onclick="doReset();showScr('game')">Phir Khelo ♥</button>
+    <button class="btn bgh bfu" onclick="showHistory()">📋 History Dekho</button>
+    <button class="btn bgh bfu" onclick="goGame()">Scores Dekho</button>
+  </div>
+</div>
+
+<script>
+// ══ CONFIG ══
+const D_GPIN = '1234', D_APIN = '0000';
+
+// ══ ACTIVITIES — {P} = player, {Q} = partner ══
+const ACTS = [
+  // CORE MAN (19)
+  {id:'c01m',g:'M',t:'{P}, tum {Q} ke liye ek naya sex position try karo — neeche wala button tap karo aur jo position aaye woh karo',url:'https://www.scratchsexpositions.com/games/random-position',urlL:'🎲 Random Position Dekho'},
+  {id:'c02m',g:'M',t:'{P}, tum {Q} ke body pe kuch meetha rakh ke lick karo — slowly, koi jagah miss mat karna'},
+  {id:'c03m',g:'M',t:'{P}, tum {Q} ko apni pehli secret sexual fantasy sunao — bilkul detail mein, koi sharm nahi'},
+  {id:'c04m',g:'M',t:'{P}, tum neeche raho — {Q} upar baithegi, tum bilkul engaged rahoge'},
+  {id:'c05m',g:'M',t:'{P}, tum {Q} ke nipples ko gently squeeze karo — unka reaction dekhte raho'},
+  {id:'c06m',g:'M',t:'{P}, tum {Q} ki anal fingering karo — dheere dheere, unki comfort ke hisaab se'},
+  {id:'c07m',g:'M',t:'{P}, tum {Q} ke body pe spanking karo — woh batayegi kitni baar aur kahan'},
+  {id:'c08m',g:'M',t:'{P}, tum {Q} ki rimming karo — full attention, bilkul dedicated'},
+  {id:'c09m',g:'M',t:'{P}, tum {Q} ke kapde pehno — crossdress karo — phir unhe kiss karo jaise woh tum ho'},
+  {id:'c10m',g:'M',t:'{P}, tum {Q} ko 10 minute ki full body massage do — woh decide karegi kahan aur kaise',timer:600},
+  {id:'c11m',g:'M',t:'{P}, tum {Q} ki gardan pe continuously 1 minute kiss karo — rukna bilkul nahi',timer:60},
+  {id:'c12m',g:'M',t:'{P}, tum {Q} ke body ka sabse pasandida part batao — wahi part kiss karke dikhao'},
+  {id:'c13m',g:'M',t:'{P}, tum {Q} ki aankhein bandh karo aur 3 aisi jagah kiss karo jahan woh expect na karein'},
+  {id:'c14m',g:'M',t:'{P}, tum {Q} ke dono kaano ko 2 minute tak lick karo — slow aur sensual',timer:120},
+  {id:'c15m',g:'M',t:'{P}, tum {Q} ko tease karo — jo chahe karo lekin penetration nahi, tab tak jab tak {Q} bilkul paagal na ho jaaye 😈'},
+  {id:'c16m',g:'M',t:'{P}, apni pasand ka gaana bajao aur ussi ke saath {Q} ko go down karo — poora gaana khatam hone tak 🎵',timer:240},
+  {id:'c17m',g:'M',t:'{P}, tum {Q} ko apni doosri sexual fantasy sunao — pehli se aur bhi bold, aur bhi detail mein'},
+  {id:'c18m',g:'M',t:'{P}, tum aur {Q} Scratchsexpositions se ek aur naya position try karo — is baar tum choose karo',url:'https://www.scratchsexpositions.com/games/random-position',urlL:'🎲 Random Position Dekho'},
+  {id:'c19m',g:'M',t:'{P}, tum {Q} ko batao woh sabse wild cheez jo kabhi unke saath karna chahi — jo abhi tak kahi nahi'},
+  // CORE WOMAN (19)
+  {id:'c01f',g:'F',t:'{P}, tum {Q} ke liye ek naya sex position try karo — neeche wala button tap karo aur jo position aaye woh karo',url:'https://www.scratchsexpositions.com/games/random-position',urlL:'🎲 Random Position Dekho'},
+  {id:'c02f',g:'F',t:'{P}, tum {Q} ke body pe kuch meetha rakh ke lick karo — slowly, koi jagah miss mat karna'},
+  {id:'c03f',g:'F',t:'{P}, tum {Q} ko apni pehli secret sexual fantasy sunao — bilkul detail mein, koi sharm nahi'},
+  {id:'c04f',g:'F',t:'{P}, tum upar baitho — {Q} neeche rahega, tum bilkul engaged raho'},
+  {id:'c05f',g:'F',t:'{P}, tum {Q} ke nipples ko gently squeeze karo — unka reaction dekhte raho'},
+  {id:'c06f',g:'F',t:'{P}, tum {Q} ki anal fingering karo — dheere dheere, unki comfort ke hisaab se'},
+  {id:'c07f',g:'F',t:'{P}, tum {Q} ke body pe spanking karo — woh batayega kitni baar aur kahan'},
+  {id:'c08f',g:'F',t:'{P}, tum {Q} ki rimming karo — full attention, bilkul dedicated'},
+  {id:'c09f',g:'F',t:'{P}, tum {Q} ke kapde pehno — crossdress karo — phir unhe kiss karo jaise woh tum ho'},
+  {id:'c10f',g:'F',t:'{P}, tum {Q} ko 10 minute ki full body massage do — woh decide karega kahan aur kaise',timer:600},
+  {id:'c11f',g:'F',t:'{P}, tum {Q} ki gardan pe continuously 1 minute kiss karo — rukna bilkul nahi',timer:60},
+  {id:'c12f',g:'F',t:'{P}, tum {Q} ke body ka sabse pasandida part batao — wahi part kiss karke dikhao'},
+  {id:'c13f',g:'F',t:'{P}, tum {Q} ki aankhein bandh karo aur 3 aisi jagah kiss karo jahan woh expect na karein'},
+  {id:'c14f',g:'F',t:'{P}, tum {Q} ke dono kaano ko 2 minute tak lick karo — slow aur sensual',timer:120},
+  {id:'c15f',g:'F',t:'{P}, tum {Q} ko tease karo — jo chahe karo lekin penetration nahi, tab tak jab tak {Q} bilkul paagal na ho jaaye 😈'},
+  {id:'c16f',g:'F',t:'{P}, apni pasand ka gaana bajao aur ussi ke saath {Q} ko go down karo — poora gaana khatam hone tak 🎵',timer:240},
+  {id:'c17f',g:'F',t:'{P}, tum {Q} ko apni doosri sexual fantasy sunao — pehli se aur bhi bold, aur bhi detail mein'},
+  {id:'c18f',g:'F',t:'{P}, tum aur {Q} Scratchsexpositions se ek aur naya position try karo — is baar tum choose karo',url:'https://www.scratchsexpositions.com/games/random-position',urlL:'🎲 Random Position Dekho'},
+  {id:'c19f',g:'F',t:'{P}, tum {Q} ko batao woh sabse wild cheez jo kabhi unke saath karna chahi — jo abhi tak kahi nahi'},
+  // ROLE PLAY MAN (12)
+  {id:'rp01m',g:'M',t:'Role Play — Sex Worker & Client 😏\n{P}, tum client ho aur {Q} sex worker hai. Scene set karo, acting compulsory, maza double.'},
+  {id:'rp02m',g:'M',t:'Role Play — Padosi Fantasy 🏠\n{P}, un padosi ke baare mein socho jinhone hamesha attract kiya. Unhe bano aur {Q} ke saath wahan se scene shuru karo jahan tum finally mile.'},
+  {id:'rp03m',g:'M',t:'Role Play — Incest Fantasy 🔥\n{P} aur {Q} — dono ek forbidden family relation choose karo. Koi judgment nahi, koi rok nahi — scene shuru karo.'},
+  {id:'rp04m',g:'M',t:'Role Play — Threesome Fantasy 🔥\n{P}, {Q} ek khaas third person suggest kare — real ya imaginary. Uske baare mein sochte hue intimacy karo.'},
+  {id:'rp05m',g:'M',t:'Role Play — Movie Star Fantasy 🎬\n{P}, apna favorite celebrity batao. Unka gaana bajao. Ussi rhythm mein, unhe sochte hue {Q} ke saath sab kuch karo.'},
+  {id:'rp06m',g:'M',t:'Role Play — Suhaag Raat 🌙\n{P}, pretend karo ki aaj {Q} ke saath pehli raat hai — sab kuch naya, sab kuch shy, poora nervous excitement.'},
+  {id:'rp07m',g:'M',t:'Role Play — Doosra Couple 👫\n{P} aur {Q} — apne kisi jaane-pehchane real couple ko imagine karo. Unhe bano, unki tarah baat karo, unki tarah romance karo.'},
+  {id:'rp08m',g:'M',t:'Role Play — Foursome Fantasy 🔥\n{P}, ek aur imaginary couple saath hai tumhare aur {Q} ke. {Q} describe kare kaun hai aur kya ho raha hai scene mein.'},
+  {id:'rp09m',g:'M',t:'Role Play — {Q} kisi aur mard ke saath 💭\n{P}, imagine karo — {Q} kisi doosre mard ke saath hai. {Q} detail mein describe karein. Tum suno aur react karo.'},
+  {id:'rp10m',g:'M',t:'Role Play — {Q} kisi aur aurat ke saath 💭\n{P}, imagine karo — {Q} kisi aur aurat ke saath hai. {Q} detail mein describe karein. Tum suno aur react karo.'},
+  {id:'rp11m',g:'M',t:'Role Play — Boss & Office Employee 😈\n{P}, tum boss ho aur {Q} tumhari naughty office employee. Meeting ke baad akele reh gaye. Kuch zyada ho gaya...'},
+  {id:'rp12m',g:'M',t:'Role Play — Ghar ke Malik & Maid 😈\n{P}, tum ghar ke malik ho aur {Q} naughty maid hai. Aaj ghar mein sirf tum dono. Cleaning baad mein hogi...'},
+  // ROLE PLAY WOMAN (12)
+  {id:'rp01f',g:'F',t:'Role Play — Sex Worker & Client 😏\n{P}, tum sex worker ho aur {Q} client hai. Scene set karo, acting compulsory, maza double.'},
+  {id:'rp02f',g:'F',t:'Role Play — Padosi Fantasy 🏠\n{P}, un padosi ke baare mein socho jinhone hamesha attract kiya. Unhe bano aur {Q} ke saath wahan se scene shuru karo jahan tum finally mile.'},
+  {id:'rp03f',g:'F',t:'Role Play — Incest Fantasy 🔥\n{P} aur {Q} — dono ek forbidden family relation choose karo. Koi judgment nahi, koi rok nahi — scene shuru karo.'},
+  {id:'rp04f',g:'F',t:'Role Play — Threesome Fantasy 🔥\n{P}, tum ek khaas third person suggest karo — real ya imaginary. Uske baare mein sochte hue {Q} ke saath intimacy karo.'},
+  {id:'rp05f',g:'F',t:'Role Play — Movie Star Fantasy 🎬\n{P}, apna favorite celebrity batao. Unka gaana bajao. Ussi rhythm mein, unhe sochte hue {Q} ke saath sab kuch karo.'},
+  {id:'rp06f',g:'F',t:'Role Play — Suhaag Raat 🌙\n{P}, pretend karo ki aaj {Q} ke saath pehli raat hai — sab kuch naya, sab kuch shy, poora nervous excitement.'},
+  {id:'rp07f',g:'F',t:'Role Play — Doosra Couple 👫\n{P} aur {Q} — apne kisi jaane-pehchane real couple ko imagine karo. Unhe bano, unki tarah baat karo, unki tarah romance karo.'},
+  {id:'rp08f',g:'F',t:'Role Play — Foursome Fantasy 🔥\n{P}, tum describe karo — ek aur imaginary couple saath hai tumhare aur {Q} ke. Kaun hai aur kya ho raha hai scene mein.'},
+  {id:'rp09f',g:'F',t:'Role Play — {Q} kisi aur aurat ke saath 💭\n{P}, imagine karo — {Q} kisi doosri aurat ke saath hai. Tum detail mein describe karo. {Q} sune aur react kare.'},
+  {id:'rp10f',g:'F',t:'Role Play — {Q} kisi aur mard ke saath 💭\n{P}, imagine karo — {Q} kisi aur mard ke saath hai. Tum detail mein describe karo. {Q} sune aur react kare.'},
+  {id:'rp11f',g:'F',t:'Role Play — Boss & Office Employee 😈\n{P}, tum boss ho aur {Q} tumhara naughty office employee hai. Meeting ke baad akele reh gaye. Kuch zyada ho gaya...'},
+  {id:'rp12f',g:'F',t:'Role Play — Madam & Driver 😈\n{P}, tum madam ho aur {Q} tumhara naughty driver hai. Lambi drive pe nikle the. Raste mein kuch zyada ho gaya...'},
+];
+
+// ══ STATE ══
+const SK='lc_v4';
+let S={players:{M:'',F:''},coupleName:'',photos:{M:null,F:null},scores:{M:0,F:0},turn:'M',played:[],custom:[],delDef:[],history:[],started:false,gpOvr:null,apOvr:null};
+const save=()=>{
+  try{
+    localStorage.setItem(SK,JSON.stringify(S));
+  }catch(e){
+    // If quota exceeded, try saving without photos
+    try{
+      const slim={...S,photos:{M:null,F:null}};
+      localStorage.setItem(SK,JSON.stringify(slim));
+      console.warn('Photos dropped from storage due to quota');
+    }catch(e2){
+      console.warn('localStorage save failed:',e2);
+    }
+  }
+};
+const load=()=>{
+  const d=localStorage.getItem(SK);
+  if(d){
+    try{
+      const p=JSON.parse(d);
+      // Validate photos - only keep valid base64 image data
+      if(p.photos){
+        if(p.photos.M && !String(p.photos.M).startsWith('data:image')) p.photos.M=null;
+        if(p.photos.F && !String(p.photos.F).startsWith('data:image')) p.photos.F=null;
+      }
+      S={...S,...p};
+    }catch(e){}
+  }
+};
+const GP=()=>S.gpOvr||D_GPIN;
+const AP=()=>S.apOvr||D_APIN;
+
+// Fill {P} and {Q} in text
+function fillNames(txt, playerName, partnerName) {
+  return txt.replace(/\{P\}/g, playerName).replace(/\{Q\}/g, partnerName);
+}
+
+// ══ AUDIO ══
+let actx=null;
+function aCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx;}
+function playFlip(){
+  const c=aCtx(),buf=c.createBuffer(1,Math.floor(c.sampleRate*.22),c.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.6)*.9;
+  const src=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+  src.buffer=buf;f.type='bandpass';f.frequency.value=2000;f.Q.value=1.4;
+  g.gain.setValueAtTime(.28,c.currentTime);g.gain.linearRampToValueAtTime(0,c.currentTime+.22);
+  src.connect(f);f.connect(g);g.connect(c.destination);src.start();
+}
+function playBell(){
+  const c=aCtx();
+  [[880,0],[1108,.1],[880,.22]].forEach(([f,t])=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.frequency.value=f;g.gain.setValueAtTime(.32,c.currentTime+t);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.85);
+    o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.9);
+  });
+}
+
+// ══ TIMER ══
+let tSec=0,tDur=0,tInt=null,tRun=false;
+function setupTimer(s){clearInterval(tInt);tDur=s;tSec=s;tRun=false;rTimer();document.getElementById('tdonemsg').style.display='none';document.getElementById('tsbtn').textContent='▶ Start';document.getElementById('tdis').className='tdis';}
+function tStartPause(){haptic([10]);if(tRun){clearInterval(tInt);tRun=false;document.getElementById('tsbtn').textContent='▶ Resume';document.getElementById('tdis').className='tdis';}else{if(tSec<=0){tReset();return;}tRun=true;document.getElementById('tsbtn').textContent='⏸ Pause';document.getElementById('tdis').className='tdis run';tInt=setInterval(()=>{tSec--;rTimer();if(tSec<=0){clearInterval(tInt);tRun=false;timerDone();}},1000);}}
+function tReset(){clearInterval(tInt);tRun=false;tSec=tDur;rTimer();document.getElementById('tdonemsg').style.display='none';document.getElementById('tsbtn').textContent='▶ Start';document.getElementById('tdis').className='tdis';}
+function rTimer(){const m=Math.floor(tSec/60),s=tSec%60;document.getElementById('tdis').textContent=`${m}:${s.toString().padStart(2,'0')}`;}
+function timerDone(){haptic([100,50,100,50,200]);playBell();document.getElementById('tdis').textContent='0:00';document.getElementById('tdis').className='tdis done';document.getElementById('tdonemsg').style.display='block';document.getElementById('tsbtn').textContent='▶ Start';}
+function stopTimer(){clearInterval(tInt);tRun=false;}
+
+// ══ NAV ══
+function showScr(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');}
+
+// ══ GAME PIN ══
+let gv='';
+function updGD(){for(let i=0;i<4;i++)document.getElementById('g'+i).classList.toggle('on',i<gv.length);}
+function gp(d){if(gv.length>=4)return;haptic([8]);gv+=d;updGD();document.getElementById('gperr').classList.remove('show');if(gv.length===4)setTimeout(chkGP,150);}
+function gpd2(){gv=gv.slice(0,-1);updGD();}
+function gpc(){gv='';updGD();document.getElementById('gperr').classList.remove('show');}
+function chkGP(){
+  if(gv===GP()){
+    load();rAvatars();
+    if(S.started&&S.players.M&&S.players.F){rGame();showScr('game');}
+    else{
+      if(S.players.M)document.getElementById('nameM').value=S.players.M;
+      if(S.players.F)document.getElementById('nameF').value=S.players.F;
+      if(S.coupleName)document.getElementById('coupleInp').value=S.coupleName;
+      if(S.photos.M)setPrev('M',S.photos.M);
+      if(S.photos.F)setPrev('F',S.photos.F);
+      showScr('setup');
+    }
+  }else{gv='';updGD();document.getElementById('gperr').classList.add('show');haptic([80,40,80]);const el=document.getElementById('gpd');el.style.animation='none';el.offsetHeight;el.style.animation='shake .4s ease';}
+}
+
+// ══ ADMIN PIN ══
+let av='';
+function updAD(){for(let i=0;i<4;i++)document.getElementById('a'+i).classList.toggle('on',i<av.length);}
+function ap(d){if(av.length>=4)return;haptic([8]);av+=d;updAD();document.getElementById('aperr').classList.remove('show');if(av.length===4)setTimeout(chkAP,150);}
+function apd2(){av=av.slice(0,-1);updAD();}
+function apc(){av='';updAD();document.getElementById('aperr').classList.remove('show');}
+function openAdmin(){haptic([10]);av='';updAD();document.getElementById('aperr').classList.remove('show');document.getElementById('adminModal').classList.add('show');}
+function closeAdmin(){document.getElementById('adminModal').classList.remove('show');av='';updAD();}
+function chkAP(){
+  if(av===AP()){closeAdmin();rManage();showScr('manage');}
+  else{av='';updAD();document.getElementById('aperr').classList.add('show');haptic([80,40,80]);const el=document.getElementById('apd');el.style.animation='none';el.offsetHeight;el.style.animation='shake .4s ease';}
+}
+document.getElementById('adminModal').addEventListener('click',e=>{if(e.target===document.getElementById('adminModal'))closeAdmin();});
+
+// ══ PHOTOS ══
+function tCam(g){document.getElementById('cam'+g).click();}
+function lPhoto(e,g){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    // Compress photo to max 200x200px JPEG at 0.6 quality to stay within localStorage limits
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const MAX=200;
+      let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.6);
+      S.photos[g]=compressed;
+      setPrev(g,compressed);
+    };
+    img.src=ev.target.result;
+  };
+  r.readAsDataURL(f);
+}
+function setPrev(g,src){document.getElementById('prev'+g).innerHTML=`<img src="${src}" alt=""><div class="pov">📷</div>`;}
+function rAvatars(){['M','F'].forEach(g=>{const el=document.getElementById('av'+g);el.innerHTML=S.photos[g]?`<img src="${S.photos[g]}" alt="">`:`<span>${g==='M'?'👨':'👩'}</span>`;});}
+function setCardPhoto(g){
+  const el=document.getElementById('cphoto');
+  const photo=S.photos[g];
+  // Only use photo if it's a valid base64 data URL
+  if(photo && typeof photo==='string' && photo.startsWith('data:image')){
+    el.innerHTML=`<img src="${photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    el.innerHTML=`<span style="font-size:42px;">${g==='M'?'👨':'👩'}</span>`;
+  }
+}
+
+// ══ SETUP ══
+function startGame(){
+  const m=document.getElementById('nameM').value.trim(),f=document.getElementById('nameF').value.trim();
+  if(!m||!f){toast('Dono ke naam daalo ♥');return;}
+  haptic([15]);
+  S.players.M=m;S.players.F=f;
+  S.coupleName=document.getElementById('coupleInp').value.trim()||`${m} & ${f}`;
+  S.started=true;save();rAvatars();rGame();showScr('game');
+}
+
+// ══ GAME ══
+const allActs=()=>[...ACTS.filter(a=>!(S.delDef||[]).includes(a.id)),...S.custom];
+const avail=g=>allActs().filter(a=>a.g===g&&!S.played.includes(a.id));
+const totLeft=()=>avail('M').length+avail('F').length;
+let curAct=null;
+
+function drawCard(){
+  haptic([15]);
+  const g=S.turn,pool=avail(g);
+  if(!pool.length){
+    const og=g==='M'?'F':'M';
+    if(!avail(og).length){showWinner();return;}
+    const el=document.getElementById('skipn');
+    el.textContent=`${S.players[g]} ke saare tasks khatam — unka turn skip!`;
+    el.classList.add('show');
+    setTimeout(()=>{el.classList.remove('show');S.turn=og;save();rGame();},2200);
+    return;
+  }
+  curAct=pool[Math.floor(Math.random()*pool.length)];
+  const P=S.players[g], Q=g==='M'?S.players.F:S.players.M;
+  playFlip();
+
+  // Fill names in text, highlight P in rose
+  const rawText=fillNames(curAct.t, P, Q);
+  // Bold/color the player name at start
+  const escapedP=P.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");const displayHtml=rawText.replace(new RegExp(escapedP),`<span class="pname">${esc(P)}</span>`);
+  const ctxtEl=document.getElementById('ctxt');
+  ctxtEl.innerHTML=displayHtml.replace(/\n/g,'<br>');
+  // Auto-shrink font for long texts
+  const tlen=curAct.t.length;
+  if(tlen>200) ctxtEl.style.fontSize='15px';
+  else if(tlen>150) ctxtEl.style.fontSize='17px';
+  else if(tlen>100) ctxtEl.style.fontSize='19px';
+  else ctxtEl.style.fontSize='21px';
+  setCardPhoto(g);
+
+  // URL or Timer
+  const urlBtn=document.getElementById('curlBtn'),timerEl=document.getElementById('ctimer');
+  if(curAct.url){urlBtn.href=curAct.url;document.getElementById('curlLbl').textContent=curAct.urlL||'🎲 Link Kholo';urlBtn.style.display='flex';timerEl.style.display='none';}
+  else if(curAct.timer){urlBtn.style.display='none';timerEl.style.display='flex';setupTimer(curAct.timer);}
+  else{urlBtn.style.display='none';timerEl.style.display='none';}
+
+  document.getElementById('ac').classList.add('fl');
+  document.getElementById('ac').dataset.aid=curAct.id;
+  document.getElementById('dsec').style.display='none';
+  document.getElementById('obs').style.display='flex';
+  document.getElementById('irsub').textContent=`${P} ne mana kiya`;
+  document.getElementById('thsub').textContent=`${Q} nahi chahte the`;
+}
+
+function rec(outcome){
+  haptic([20]);stopTimer();
+  const g=S.turn,aid=document.getElementById('ac').dataset.aid;
+  const delta=outcome==='done'?1:outcome==='ref'?-1:0;
+  S.scores[g]+=delta;S.played.push(aid);
+  S.history.push({round:S.history.length+1,g,pName:S.players[g],aid,txt:curAct?curAct.t.replace(/\{P\}/g,S.players[g]).replace(/\{Q\}/g,g==='M'?S.players.F:S.players.M).split('\n')[0]:'',outcome,delta,ts:Date.now()});
+  S.turn=g==='M'?'F':'M';save();flashScore(delta);
+  setTimeout(()=>{
+    playFlip();
+    document.getElementById('ac').classList.remove('fl');
+    document.getElementById('curlBtn').style.display='none';
+    document.getElementById('ctimer').style.display='none';
+    setTimeout(()=>{document.getElementById('dsec').style.display='flex';document.getElementById('obs').style.display='none';rGame();if(!totLeft())setTimeout(showWinner,700);},380);
+  },300);
+}
+
+function rGame(){
+  const{players,scores,turn}=S,og=turn==='M'?'F':'M';
+  document.getElementById('snM').textContent=players.M||'Him';
+  document.getElementById('snF').textContent=players.F||'Her';
+  ['M','F'].forEach(g=>{const v=scores[g],el=document.getElementById(g==='M'?'svM':'svF');el.textContent=v;el.className='snum'+(v>0?' pos':v<0?' neg':'');});
+  document.getElementById('spM').classList.toggle('at',turn==='M');
+  document.getElementById('spF').classList.toggle('at',turn==='F');
+  const tn=document.getElementById('tname');
+  tn.textContent=players[turn]||(turn==='M'?'Him':'Her');
+  tn.className='tname '+(turn==='M'?'man':'woman');
+  // ★ CHANGE 1: new turn subtext
+  const partner=players[og]||(og==='M'?'uske':'uske');
+  document.getElementById('tlbl').textContent=`${players[turn]} Ki Baari`;
+  document.getElementById('tsub').textContent=`${players[turn]} ki baari ${partner} ko enjoy karane ki`;
+  const left=avail(turn).length,total=totLeft();
+  document.getElementById('rbadge').textContent=`${players[turn]} ke liye ${left} baaki · Total ${total}`;
+}
+
+function flashScore(d){
+  const el=document.getElementById('sf');el.classList.remove('go');
+  el.textContent=d>0?'+1':d<0?'−1':'0';
+  el.style.color=d>0?'#6aba90':d<0?'#c4365a':'#7a5f6e';
+  el.offsetHeight;el.classList.add('go');
+}
+
+function showWinner(){
+  const{players,scores,coupleName}=S;
+  let name,emoji;
+  if(scores.M>scores.F){name=players.M;emoji='🏆';}
+  else if(scores.F>scores.M){name=players.F;emoji='🏆';}
+  else{name='Tie! Barabar!';emoji='🤝';}
+  document.getElementById('wname').textContent=name;
+  document.getElementById('wtro').textContent=emoji;
+  document.getElementById('fnM').textContent=players.M;
+  document.getElementById('fnF').textContent=players.F;
+  document.getElementById('fsM').textContent=scores.M;
+  document.getElementById('fsF').textContent=scores.F;
+  document.getElementById('wcouple').textContent=coupleName||`${players.M} & ${players.F}`;
+  showScr('winner');
+}
+
+function endEarly(){if(!confirm('Game abhi khatam karein?'))return;showWinner();}
+function doReset(){
+  if(!confirm('Scores aur deck reset karein? Names aur activities saved rahengi.'))return;
+  haptic([20]);stopTimer();
+  S.scores={M:0,F:0};S.turn='M';S.played=[];S.history=[];save();
+  document.getElementById('ac').classList.remove('fl');
+  document.getElementById('curlBtn').style.display='none';
+  document.getElementById('ctimer').style.display='none';
+  document.getElementById('dsec').style.display='flex';
+  document.getElementById('obs').style.display='none';
+  rGame();showScr('game');toast('Game reset — fresh start ♥');
+}
+function goGame(){stopTimer();rGame();showScr('game');}
+
+// ══ MANAGE ══
+let nG='M';
+function selG(g){nG=g;document.getElementById('goptM').className='gopt'+(g==='M'?' sm':'');document.getElementById('goptF').className='gopt'+(g==='F'?' sf':'');}
+function addAct(){
+  const txt=document.getElementById('newAct').value.trim();
+  if(!txt){toast('Pehle activity likhо');return;}
+  haptic([10]);
+  S.custom.push({id:'c'+Date.now(),g:nG,t:txt,custom:true});
+  save();document.getElementById('newAct').value='';rManage();toast('Activity add ho gayi ✦');
+}
+function delAct(id){if(!confirm('Delete karein?'))return;S.custom=S.custom.filter(a=>a.id!==id);S.played=S.played.filter(p=>p!==id);save();rManage();toast('Delete ho gayi');}
+function delDef(id){if(!confirm('Hata dein?'))return;if(!S.delDef)S.delDef=[];S.delDef.push(id);save();rManage();toast('Hata di gayi');}
+function changePins(){
+  const ng=document.getElementById('ngp').value.trim(),na=document.getElementById('nap').value.trim();
+  if(ng&&!/^\d{4}$/.test(ng)){toast('Game PIN 4 digits hona chahiye');return;}
+  if(na&&!/^\d{4}$/.test(na)){toast('Admin PIN 4 digits hona chahiye');return;}
+  if(!ng&&!na){toast('Koi PIN daalo pehle');return;}
+  if(ng)S.gpOvr=ng;if(na)S.apOvr=na;save();
+  document.getElementById('ngp').value='';document.getElementById('nap').value='';
+  toast('PIN update ho gaya ✓');haptic([15,10,15]);
+}
+function rManage(){
+  const vis=ACTS.filter(a=>!(S.delDef||[]).includes(a.id));
+  const all=[...vis,...S.custom];
+  const mc=all.filter(a=>a.g==='M').length,fc=all.filter(a=>a.g==='F').length;
+  document.getElementById('cntM').textContent=mc;
+  document.getElementById('cntF').textContent=fc;
+  document.getElementById('bwarn').classList.toggle('show',mc!==fc);
+  document.getElementById('custList').innerHTML=S.custom.length
+    ?S.custom.map(a=>`<div class="ait cust"><span class="gbdg ${a.g==='M'?'m':'f'}">${a.g==='M'?'👨':'👩'}</span><span class="atxt">${esc(a.t.substring(0,80))}</span><span class="adel" onclick="delAct('${a.id}')">✕</span></div>`).join('')
+    :'<div class="es">Koi custom activity nahi</div>';
+  document.getElementById('defList').innerHTML=vis.map(a=>`<div class="ait"><span class="gbdg ${a.g==='M'?'m':'f'}">${a.g==='M'?'👨':'👩'}</span><span class="atxt">${esc(a.t.split('\n')[0].substring(0,80))}</span><span class="adel" onclick="delDef('${a.id}')">✕</span></div>`).join('');
+}
+
+// ══ HISTORY ══
+function showHistory(){
+  const list=document.getElementById('histList');
+  if(!S.history.length){list.innerHTML='<div class="es">Is session mein abhi kuch nahi hua</div>';}
+  else{
+    const oMap={done:{ico:'✓',cls:'done',lbl:'Kar diya'},ref:{ico:'✗',cls:'ref',lbl:'Mana kiya'},thy:{ico:'⊘',cls:'thy',lbl:'Partner ne mana'}};
+    list.innerHTML=S.history.map(h=>{
+      const o=oMap[h.outcome]||oMap.thy;
+      const pts=h.delta>0?'+1':h.delta<0?'−1':'0';
+      return `<div class="hitem"><div class="hico ${o.cls}">${o.ico}</div><div class="hinf"><div class="hpl">${esc(h.pName)} — Round ${h.round} · ${o.lbl}</div><div class="htxt">${esc(h.txt.substring(0,90)+(h.txt.length>90?'…':''))}</div></div><div class="hpts" style="color:${h.delta>0?'#6aba90':h.delta<0?'var(--rose)':'var(--mut)'}">${pts}</div></div>`;
+    }).join('');
+  }
+  document.getElementById('histModal').classList.add('show');
+}
+function closeHist(){document.getElementById('histModal').classList.remove('show');}
+document.getElementById('histModal').addEventListener('click',e=>{if(e.target===document.getElementById('histModal'))closeHist();});
+
+// ══ UTILS ══
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function haptic(p=[10]){if(navigator.vibrate)navigator.vibrate(p);}
+
+// ══ CHANGE PLAYERS ══
+function changePlayers(){
+  if(!confirm('Player profiles reset karein? Scores aur game bhi reset ho jayega.'))return;
+  haptic([20]);stopTimer();
+  S={players:{M:'',F:''},coupleName:'',photos:{M:null,F:null},scores:{M:0,F:0},turn:'M',played:[],custom:S.custom,delDef:S.delDef,history:[],started:false,gpOvr:S.gpOvr,apOvr:S.apOvr};
+  save();
+  document.getElementById('prevM').innerHTML='<span>📷</span><div class="pov">📷</div>';
+  document.getElementById('prevF').innerHTML='<span>📷</span><div class="pov">📷</div>';
+  document.getElementById('nameM').value='';
+  document.getElementById('nameF').value='';
+  document.getElementById('coupleInp').value='';
+  showScr('setup');
+  toast('Players reset — nayi shuruat ♥');
+}
+
+// ══ INIT ══
+updGD();updAD();
+</script>
+</body>
+</html>
